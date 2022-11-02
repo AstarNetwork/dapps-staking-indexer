@@ -1,0 +1,46 @@
+specVersion: 1.0.0
+name: dapps-staking-indexer
+version: 0.0.1
+runner:
+  node:
+    name: '@subql/node'
+    version: '*'
+  query:
+    name: '@subql/query'
+    version: '*'
+description: Astar Network dapps staking indexing service.
+repository: 'https://github.com/AstarNetwork/dapps-staking-idnexer'
+schema:
+  file: ./schema.graphql
+network:
+  chainId: '0x9eb76c5184c4ab8679d2d5d819fdf90b9c001403e9e17da2e14b6d8aec4029c6'
+  endpoint: 'wss://astar.api.onfinality.io/public-wss'
+  dictionary: 'https://api.subquery.network/sq/subquery/astar-dictionary'
+  chaintypes:
+    file: ./dist/chaintypes.js
+dataSources:
+- kind: substrate/FrontierEvm
+  # startBlock: 1
+  startBlock: 814289 #The first block after all Staking festival dapps were unregistered
+  processor:
+    file: ./node_modules/@subql/frontier-evm-processor/dist/index.js
+  mapping:
+    file: ./dist/index.js
+    handlers:
+      - handler: handleFrontierEvmCall
+        kind: substrate/FrontierEvmCall
+  # - kind: substrate/Runtime
+  #   startBlock: 814289 #The first block after all Staking festival dapps were unregistered.
+  #   mapping:
+  #     file: ./dist/index.js
+  #     handlers:
+  #       - handler: handleNewContract
+  #         kind: substrate/EventHandler
+  #         filter:
+  #           module: dappsStaking
+  #           method: NewContract
+  #       - handler: handleContractRemoved
+  #         kind: substrate/EventHandler
+  #         filter:
+  #           module: dappsStaking
+  #           method: ContractRemoved

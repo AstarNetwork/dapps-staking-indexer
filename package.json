@@ -1,0 +1,32 @@
+{
+  "name": "dapps-staking-indexer",
+  "version": "0.0.1",
+  "description": "Astar Network dapps staking indexing service.",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "subql build",
+    "prepack": "rm -rf dist && npm build",
+    "test": "jest",
+    "codegen": "subql codegen",
+    "start:docker": "docker-compose pull && docker-compose up --remove-orphans"
+  },
+  "homepage": "https://github.com/subquery/astar-subql-starter",
+  "repository": "github:subquery/astar-subql-starter",
+  "files": [
+    "dist",
+    "schema.graphql",
+    "project.yaml"
+  ],
+  "author": "Bobo K.",
+  "license": "MIT",
+  "devDependencies": {
+    "@polkadot/api": "^9",
+    "@subql/types": "latest",
+    "@subql/frontier-evm-processor": "latest",
+    "typescript": "^4.1.3",
+    "@subql/cli": "latest"
+  },
+  "exports": {
+    "chaintypes": "src/chaintypes.ts"
+  }
+}
