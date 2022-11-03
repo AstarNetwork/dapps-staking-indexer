@@ -2,8 +2,15 @@
 # Add the `@index` or `@index(unique: true)` annotation after any non-key field
 # https://academy.subquery.network/build/graphql.html#indexing-by-non-primary-key-field
 
-type Call @entity {
-  id: ID! # year_month_contract
+type CallByEra @entity {
+  id: ID! # era_contract
+  contractAddress: String! @index
+  era: BigInt! @index
+  numberOfCalls: BigInt!
+}
+
+type CallMonthly @entity {
+  id: ID! # year_month_day_contract
   contractAddress: String! @index
   timestamp: BigInt! @index
   numberOfCalls: BigInt!

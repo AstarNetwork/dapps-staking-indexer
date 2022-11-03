@@ -1,4 +1,5 @@
-import { Call } from "../types";
+import { EraIndex } from '@polkadot/types/interfaces';
+import { CallByEra } from "../types";
 import {
   FrontierEvmEvent,
   FrontierEvmCall,
@@ -16,17 +17,17 @@ export async function handleFrontierEvmCall(
 ): Promise<void> {
   logger.warn(`${call.from} ${call.to} ${call.success} ${call.gasPrice} ${call.args} ${call.timestamp}`);
   
-  const date = formatDate(new Date(call.timestamp * 1000));
-  const id = `${date}_${call.to}`;
+  const era = await api.query.dappsStaking.currentEra<EraIndex>()
+  const id = `${era}_${call.to}`;
 
-  let record = await Call.get(id);
+  let record = await CallByEra.get(id);
   if(record) {
     record.numberOfCalls++;
   } else {
-    record = new Call(id);
+    record = new CallByEra(id);
     record.contractAddress = call.to;
     record.numberOfCalls = BigInt(1);
-    record.timestamp = call.timestamp ? BigInt(call.timestamp) : BigInt(0);
+    record.era = era.toBigInt();
   }
 
   await record.save();
