@@ -7,6 +7,9 @@
 node_modules/
 dist/
 
+# database files
+.data/
+
 # lock files
 yarn.lock
 package-lock.json
