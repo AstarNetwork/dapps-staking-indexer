@@ -23,6 +23,7 @@
     "@polkadot/api": "^9",
     "@subql/types": "latest",
     "@subql/frontier-evm-processor": "latest",
+    "@subql/substrate-wasm-processor": "latest",
     "typescript": "^4.1.3",
     "@subql/cli": "latest"
   },
