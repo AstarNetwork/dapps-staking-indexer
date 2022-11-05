@@ -1,6 +1,8 @@
-import { Codec } from "@polkadot/types-codec/types";
-
-let allContracts: Map<string, string> = null;
+// Cache for registered contracts. Fetching all registered contracts on every call will have
+// performance penalty.
+// Idea is to fetch contracts once if cache is not initialized and to listen for contract register/unregister
+// events to update cache.
+let contracts: Map<string, boolean> = null;
 
 export function getAddress(address: string): string {
   const addressJson = JSON.parse(address);
@@ -12,9 +14,9 @@ export function formatDate(date: Date): string {
   return date.toISOString().slice(0, 10).replace(/-/g, "");
 }
 
-async function getRegisteredContracts(): Promise<Map<string, string>> {
+async function getRegisteredContracts(): Promise<Map<string, boolean>> {
   const dapps = await api.query.dappsStaking.registeredDapps.entries();
-  const result = new Map<string, string>();
+  const result = new Map<string, boolean>();
 
   dapps.forEach(([key, value]) => {
     // TODO handle Unregistered contracts
@@ -23,7 +25,7 @@ async function getRegisteredContracts(): Promise<Map<string, string>> {
 
     if (contractAddress) {
       logger.warn(`adding address ${contractAddress}`);
-      result.set(address, address); //Value should be contract state.
+      result.set(address, true); //Value should be contract state.
     }
   });
 
@@ -31,15 +33,46 @@ async function getRegisteredContracts(): Promise<Map<string, string>> {
   return result;
 }
 
+async function getContracts(): Promise<Map<string, boolean>> {
+  if (!contracts) {
+    contracts = await getRegisteredContracts();
+  }
+
+  return contracts;
+}
+
+/**
+ * Checks if contracts is registered for dApps staking
+ * @param contractAddress Contract address.
+ * @returns A value indicating if contract is registerd or not.
+ */
 export async function isRegisteredContract(
   contractAddress: string
 ): Promise<boolean> {
-  if (!allContracts) {
-    allContracts = await getRegisteredContracts();
-  }
+  const c = await getContracts();
+  logger.warn(`${contractAddress} ${c.size} ${c.has(contractAddress)}`);
 
-  logger.info(
-    `has contract ${contractAddress}=${allContracts.has(contractAddress)}`
-  );
-  return allContracts.has(contractAddress);
+  return c.has(contractAddress);
 }
+
+/**
+ * Adds contract to dapps cache.
+ * @param contractAddress Contact to add.
+ */
+export async function addContactToCache(contractAddress: string) {
+  const c = await getContracts();
+  
+  c.set(contractAddress, true);
+}
+
+/**
+ * Removes contract to dapps cache.
+ * @param contractAddress Contact to remove.
+ */
+ export async function removeContactFromCache(contractAddress: string) {
+  const c = await getContracts();
+  
+  c.delete(contractAddress);
+}
+
+

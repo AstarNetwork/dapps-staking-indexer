@@ -42,18 +42,19 @@ dataSources:
     handlers:
       - handler: handleWasmCall
         kind: substrate/WasmCall
-  # - kind: substrate/Runtime
-  #   startBlock: 814289 #The first block after all Staking festival dapps were unregistered.
-  #   mapping:
-  #     file: ./dist/index.js
-  #     handlers:
-  #       - handler: handleNewContract
-  #         kind: substrate/EventHandler
-  #         filter:
-  #           module: dappsStaking
-  #           method: NewContract
-  #       - handler: handleContractRemoved
-  #         kind: substrate/EventHandler
-  #         filter:
-  #           module: dappsStaking
-  #           method: ContractRemoved
+- kind: substrate/Runtime
+  # startBlock: 814289 #The first block after all Staking festival dapps were unregistered.
+  startBlock: 1
+  mapping:
+    file: ./dist/index.js
+    handlers:
+      - handler: handleNewContract
+        kind: substrate/EventHandler
+        filter:
+          module: dappsStaking
+          method: NewContract
+      - handler: handleContractRemoved
+        kind: substrate/EventHandler
+        filter:
+          module: dappsStaking
+          method: ContractRemoved

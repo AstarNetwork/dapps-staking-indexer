@@ -1,8 +1,7 @@
 // Methods here handles dapps staking pallet events.
 import { SubstrateEvent } from "@subql/types";
 import { Codec } from "@polkadot/types/types";
-import { Contract, ContractState } from "../types";
-import { isRegisteredContract } from "./common";
+import { addContactToCache, removeContactFromCache } from "./common";
 
 function getAddress(address: Codec): string {
   const addressJson = JSON.parse(address.toString());
@@ -10,23 +9,20 @@ function getAddress(address: Codec): string {
   return addressJson.evm ? addressJson.evm : addressJson.wasm;
 }
 
+/**
+ * Handles a newly registered dapps staking contract.
+ * @param event Register event.
+ */
 export async function handleNewContract(event: SubstrateEvent): Promise<void> {
-  return; // no processign ATM
-
   const {
     event: {
       data: [account, contract],
     },
   } = event;
-  const blockNumber = event.block.block.header.number.toBigInt();
+  
+  logger.warn(`New contract ${contract}`);
   const contractAddress = getAddress(contract);
-  const record = new Contract(contractAddress);
-  record.owner = account.toString();
-  record.state = ContractState.Registered;
-  record.blockRegistered = blockNumber;
-  await record.save();
-
-  await isRegisteredContract(contractAddress);
+  await addContactToCache(contractAddress);
 }
 
 export async function handleContractRemoved(
@@ -37,11 +33,7 @@ export async function handleContractRemoved(
       data: [account, contract],
     },
   } = event;
-  const blockNumber = event.block.block.header.number.toBigInt();
 
   const contractAddress = getAddress(contract);
-  const record = await Contract.get(contractAddress);
-  record.state = ContractState.Unregistered;
-  record.blockUnregistered = blockNumber;
-  await record.save();
+  await removeContactFromCache(contractAddress);
 }
