@@ -2,6 +2,11 @@ import { EraIndex } from "@polkadot/types/interfaces";
 import { CallByEra } from "../types";
 import { isRegisteredContract } from "./common";
 
+/**
+ * Stores number of calls and number of unique users to database
+ * @param toAddress Contract address.
+ * @param fromAddress User address.
+ */
 export async function storeCall(toAddress: string, fromAddress: string): Promise<void> {
   if (await isRegisteredContract(toAddress)) {
     const era = await api.query.dappsStaking.currentEra<EraIndex>();

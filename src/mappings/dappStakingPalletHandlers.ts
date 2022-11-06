@@ -10,8 +10,8 @@ function getAddress(address: Codec): string {
 }
 
 /**
- * Handles a newly registered dapps staking contract.
- * @param event Register event.
+ * Adds contract address to cache.
+ * @param event Register event data.
  */
 export async function handleNewContract(event: SubstrateEvent): Promise<void> {
   const {
@@ -25,6 +25,10 @@ export async function handleNewContract(event: SubstrateEvent): Promise<void> {
   await addContactToCache(contractAddress);
 }
 
+/**
+ * Removes contract address from cache.
+ * @param event Unregister event data.
+ */
 export async function handleContractRemoved(
   event: SubstrateEvent
 ): Promise<void> {

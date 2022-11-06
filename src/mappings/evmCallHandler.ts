@@ -8,6 +8,10 @@ type ApproveCallArgs = [string, BigNumber] & {
   _value: BigNumber;
 };
 
+/**
+ * Handles EVM contract call.
+ * @param call Call info.
+ */
 export async function handleFrontierEvmCall(
   call: FrontierEvmCall<ApproveCallArgs>
 ): Promise<void> {

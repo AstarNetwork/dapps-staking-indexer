@@ -68,7 +68,6 @@ export async function isRegisteredContract(
   contractAddress: string
 ): Promise<boolean> {
   const c = await getContracts();
-  // logger.warn(`${contractAddress} ${c.size} ${c.has(contractAddress)}`);
 
   return c.has(contractAddress);
 }

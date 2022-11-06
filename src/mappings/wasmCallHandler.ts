@@ -5,6 +5,10 @@ import { storeCall } from "./commonCall";
 
 type ApproveCallArgs = [AccountId, Balance];
 
+/**
+ * Handles WASM contract call.
+ * @param call Call info.
+ */
 export async function handleWasmCall(
   call: WasmCall<ApproveCallArgs>
 ): Promise<void> {
