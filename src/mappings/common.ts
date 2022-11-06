@@ -1,3 +1,19 @@
+import { Option, Struct } from '@polkadot/types';
+import { AccountId } from '@polkadot/types/interfaces';
+
+interface RegisteredDapp extends Struct {
+  readonly developer: AccountId;
+  readonly state: DappState;
+}
+
+interface DappState {
+  isUnregistered: boolean;
+  asUnregistered: {
+    // Memo: era of unregistration
+    words: number[];
+  };
+}
+
 // Cache for registered contracts. Fetching all registered contracts on every call will have
 // performance penalty.
 // Idea is to fetch contracts once if cache is not initialized and to listen for contract register/unregister
@@ -19,13 +35,15 @@ async function getRegisteredContracts(): Promise<Map<string, boolean>> {
   const result = new Map<string, boolean>();
 
   dapps.forEach(([key, value]) => {
-    // TODO handle Unregistered contracts
     const address = key.args.map((x) => x.toString())[0];
     const contractAddress = getAddress(address);
-
-    if (contractAddress) {
-      logger.warn(`adding address ${contractAddress}`);
-      result.set(address, true); //Value should be contract state.
+    const v = <Option<RegisteredDapp>>value;
+    if (contractAddress && v.isSome) {
+      const unwrappedValue = v.unwrap();
+      if (!unwrappedValue.state.isUnregistered) {
+        logger.warn(`adding address ${contractAddress}`);
+        result.set(address, true);
+      }
     }
   });
 
@@ -50,7 +68,7 @@ export async function isRegisteredContract(
   contractAddress: string
 ): Promise<boolean> {
   const c = await getContracts();
-  logger.warn(`${contractAddress} ${c.size} ${c.has(contractAddress)}`);
+  // logger.warn(`${contractAddress} ${c.size} ${c.has(contractAddress)}`);
 
   return c.has(contractAddress);
 }

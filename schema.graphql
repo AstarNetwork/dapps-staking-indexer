@@ -7,26 +7,7 @@ type CallByEra @entity {
   contractAddress: String! @index
   era: BigInt! @index
   numberOfCalls: BigInt!
+  uniqueActiveUsers: BigInt!
+  activeUsers: [String]!
 }
-
-type CallMonthly @entity {
-  id: ID! # year_month_day_contract
-  contractAddress: String! @index
-  timestamp: BigInt! @index
-  numberOfCalls: BigInt!
-}
-
-enum ContractState {
-  Registered,
-  Unregistered
-}
-
-type Contract @entity {
-  id: ID! #id is a required field
-  owner: String!
-  state: ContractState!
-  blockRegistered: BigInt!
-  blockUnregistered: BigInt
-}
-
 
