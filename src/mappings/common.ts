@@ -37,13 +37,19 @@ async function getRegisteredContracts(): Promise<Map<string, boolean>> {
   dapps.forEach(([key, value]) => {
     const address = key.args.map((x) => x.toString())[0];
     const contractAddress = getAddress(address);
-    const v = <Option<RegisteredDapp>>value;
-    if (contractAddress && v.isSome) {
-      const unwrappedValue = v.unwrap();
-      if (!unwrappedValue.state.isUnregistered) {
-        logger.warn(`adding address ${contractAddress}`);
-        result.set(address, true);
-      }
+    // const v = <Option<RegisteredDapp>>value;
+    // if (contractAddress && v.isSome) {
+    //   const unwrappedValue = v.unwrap();
+    //   logger.warn('unw' + unwrappedValue.toHuman());
+    //   if (!unwrappedValue.state?.isUnregistered) {
+    //     logger.warn(`adding address ${contractAddress}`);
+    //     result.set(address, true);
+    //   }
+    // }
+
+    // TODO check why the code above is not working (v.unwrap())
+    if (contractAddress) {
+      result.set(address, true);
     }
   });
 

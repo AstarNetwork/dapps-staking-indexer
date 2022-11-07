@@ -7,7 +7,7 @@ type CallByEra @entity {
   contractAddress: String! @index
   era: BigInt! @index
   numberOfCalls: BigInt!
-  uniqueActiveUsers: BigInt!
   activeUsers: [String]!
+  uniqueActiveUsers: BigInt!
 }
 
