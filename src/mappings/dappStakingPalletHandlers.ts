@@ -1,7 +1,12 @@
 // Methods here handles dapps staking pallet events.
 import { SubstrateEvent } from "@subql/types";
 import { Codec } from "@polkadot/types/types";
+import {Balance} from '@polkadot/types/interfaces';
 import { addContactToCache, removeContactFromCache } from "./common";
+import { UserTransaction } from "../types";
+import crypto from 'crypto';
+
+type StakingEvent = 'BondAndStake' | 'UnbondAndUnstake' | 'Withdrawal' | 'NominationTransfer';
 
 function getAddress(address: Codec): string {
   const addressJson = JSON.parse(address.toString());
@@ -40,4 +45,70 @@ export async function handleContractRemoved(
 
   const contractAddress = getAddress(contract);
   await removeContactFromCache(contractAddress);
+}
+
+export async function handleBondAndStake(event: SubstrateEvent): Promise<void> {
+  const {event: {data: [account, contract, amount]}} = event;
+  await storeEvent(
+    'BondAndStake',
+    account.toString(),
+    (amount as Balance).toBigInt(),
+    BigInt(event.block.timestamp.getTime()),
+    contract);
+}
+
+export async function handleUnbondAndUnstake(event: SubstrateEvent): Promise<void> {
+  const {event: {data: [account, contract, amount]}} = event;
+  await storeEvent(
+    'UnbondAndUnstake',
+    account.toString(),
+    (amount as Balance).toBigInt(),
+    BigInt(event.block.timestamp.getTime()),
+    contract);
+}
+
+export async function handleWithdrawal(event: SubstrateEvent): Promise<void> {
+  const {event: {data: [account, amount]}} = event;
+  await storeEvent(
+    'Withdrawal',
+    account.toString(),
+    (amount as Balance).toBigInt(),
+    BigInt(event.block.timestamp.getTime()));
+}
+
+export async function handleWithdrawalFromUnregistered(event: SubstrateEvent): Promise<void> {
+  const {event: {data: [account, contract, amount]}} = event;
+  await storeEvent(
+    'Withdrawal',
+    account.toString(),
+    (amount as Balance).toBigInt(),
+    BigInt(event.block.timestamp.getTime()),
+    contract);
+}
+
+export async function handleNominationTransfer(event: SubstrateEvent): Promise<void> {
+  const {event: {data: [account, originContract, amount, targetContract]}} = event;
+  await storeEvent(
+    'NominationTransfer',
+    account.toString(),
+    (amount as Balance).toBigInt(),
+    BigInt(event.block.timestamp.getTime()),
+    targetContract);
+}
+
+async function storeEvent(
+  event: StakingEvent,
+  userAddress: string,
+  amount: bigint,
+  timestamp: bigint,
+  contractAddres?: Codec
+): Promise<void> {
+  const id = crypto.randomUUID();
+  const record = new UserTransaction(id);
+  record.amount = amount;
+  record.timestamp = timestamp;
+  record.transaction = event;
+  record.userAddress = userAddress;
+  record.contractAddress = contractAddres ? getAddress(contractAddres) : null;
+  await record.save();
 }

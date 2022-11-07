@@ -11,3 +11,12 @@ type CallByEra @entity {
   uniqueActiveUsers: BigInt!
 }
 
+type UserTransaction @entity {
+  id: ID!
+  userAddress: String! @index
+  transaction: String!
+  contractAddress: String
+  amount: BigInt!
+  timestamp: BigInt! @index
+}
+
