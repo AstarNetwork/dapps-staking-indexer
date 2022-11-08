@@ -1,12 +1,10 @@
 // Methods here handles dapps staking pallet events.
 import { SubstrateEvent } from "@subql/types";
 import { Codec } from "@polkadot/types/types";
-import {Balance} from '@polkadot/types/interfaces';
+import { Balance } from '@polkadot/types/interfaces';
 import { addContactToCache, removeContactFromCache } from "./common";
-import { UserTransaction } from "../types";
+import { UserTransaction, UserTransactionType } from "../types";
 import crypto from 'crypto';
-
-type StakingEvent = 'BondAndStake' | 'UnbondAndUnstake' | 'Withdrawal' | 'NominationTransfer';
 
 function getAddress(address: Codec): string {
   const addressJson = JSON.parse(address.toString());
@@ -50,7 +48,7 @@ export async function handleContractRemoved(
 export async function handleBondAndStake(event: SubstrateEvent): Promise<void> {
   const {event: {data: [account, contract, amount]}} = event;
   await storeEvent(
-    'BondAndStake',
+    UserTransactionType.BondAndStake,
     account.toString(),
     (amount as Balance).toBigInt(),
     BigInt(event.block.timestamp.getTime()),
@@ -60,7 +58,7 @@ export async function handleBondAndStake(event: SubstrateEvent): Promise<void> {
 export async function handleUnbondAndUnstake(event: SubstrateEvent): Promise<void> {
   const {event: {data: [account, contract, amount]}} = event;
   await storeEvent(
-    'UnbondAndUnstake',
+    UserTransactionType.UnbondAndUnstake,
     account.toString(),
     (amount as Balance).toBigInt(),
     BigInt(event.block.timestamp.getTime()),
@@ -70,7 +68,7 @@ export async function handleUnbondAndUnstake(event: SubstrateEvent): Promise<voi
 export async function handleWithdrawal(event: SubstrateEvent): Promise<void> {
   const {event: {data: [account, amount]}} = event;
   await storeEvent(
-    'Withdrawal',
+    UserTransactionType.Withdrawal,
     account.toString(),
     (amount as Balance).toBigInt(),
     BigInt(event.block.timestamp.getTime()));
@@ -79,7 +77,7 @@ export async function handleWithdrawal(event: SubstrateEvent): Promise<void> {
 export async function handleWithdrawalFromUnregistered(event: SubstrateEvent): Promise<void> {
   const {event: {data: [account, contract, amount]}} = event;
   await storeEvent(
-    'Withdrawal',
+    UserTransactionType.Withdrawal,
     account.toString(),
     (amount as Balance).toBigInt(),
     BigInt(event.block.timestamp.getTime()),
@@ -89,7 +87,7 @@ export async function handleWithdrawalFromUnregistered(event: SubstrateEvent): P
 export async function handleNominationTransfer(event: SubstrateEvent): Promise<void> {
   const {event: {data: [account, originContract, amount, targetContract]}} = event;
   await storeEvent(
-    'NominationTransfer',
+    UserTransactionType.NominationTransfer,
     account.toString(),
     (amount as Balance).toBigInt(),
     BigInt(event.block.timestamp.getTime()),
@@ -97,7 +95,7 @@ export async function handleNominationTransfer(event: SubstrateEvent): Promise<v
 }
 
 async function storeEvent(
-  event: StakingEvent,
+  event: UserTransactionType,
   userAddress: string,
   amount: bigint,
   timestamp: bigint,

@@ -14,9 +14,16 @@ type CallByEra @entity {
 type UserTransaction @entity {
   id: ID!
   userAddress: String! @index
-  transaction: String!
+  transaction: UserTransactionType!
   contractAddress: String
   amount: BigInt!
   timestamp: BigInt! @index
+}
+
+enum UserTransactionType {
+  BondAndStake,
+  UnbondAndUnstake,
+  Withdrawal,
+  NominationTransfer
 }
 
