@@ -12,7 +12,7 @@ type ApproveCallArgs = [AccountId, Balance];
 export async function handleWasmCall(
   call: WasmCall<ApproveCallArgs>
 ): Promise<void> {
-  if (call.dest && isRegisteredContract(call.dest.toString())) {
-    await storeCall(call.dest.toString(), call.from.toString());
+  if (call.dest) {
+    await storeCall(call.dest.toString(), call.from.toString(), BigInt(call.timestamp.getTime()), call.blockNumber);
   }
 }

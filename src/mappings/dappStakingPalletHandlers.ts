@@ -23,7 +23,6 @@ export async function handleNewContract(event: SubstrateEvent): Promise<void> {
     },
   } = event;
   
-  logger.warn(`New contract ${contract}`);
   const contractAddress = getAddress(contract);
   await addContactToCache(contractAddress);
 }

@@ -53,7 +53,7 @@ async function getRegisteredContracts(): Promise<Map<string, boolean>> {
     }
   });
 
-  logger.info(`Found ${result.size} contracts.`);
+  logger.info(`***Found ${result.size} contracts.`);
   return result;
 }
 
@@ -84,7 +84,7 @@ export async function isRegisteredContract(
  */
 export async function addContactToCache(contractAddress: string) {
   const c = await getContracts();
-  
+  logger.info(`***Adding contract ${contractAddress} to cache.`);
   c.set(contractAddress, true);
 }
 
@@ -94,7 +94,7 @@ export async function addContactToCache(contractAddress: string) {
  */
  export async function removeContactFromCache(contractAddress: string) {
   const c = await getContracts();
-  
+  logger.info(`***Removing contract ${contractAddress} from cache.`);
   c.delete(contractAddress);
 }
 

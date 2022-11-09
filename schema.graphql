@@ -9,6 +9,9 @@ type CallByEra @entity {
   numberOfCalls: BigInt!
   activeUsers: [String]!
   uniqueActiveUsers: BigInt!
+  timestamp: BigInt,
+  startBlock: Int
+  endBlock: Int
 }
 
 type UserTransaction @entity {

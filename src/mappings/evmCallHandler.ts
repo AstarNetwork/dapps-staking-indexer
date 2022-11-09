@@ -15,7 +15,5 @@ type ApproveCallArgs = [string, BigNumber] & {
 export async function handleFrontierEvmCall(
   call: FrontierEvmCall<ApproveCallArgs>
 ): Promise<void> {
-  if (call.to && isRegisteredContract(call.to)) {
-    await storeCall(call.to, call.from);
-  }
+  await storeCall(call.to, call.from, BigInt(call.timestamp), call.blockNumber);
 }

@@ -58,28 +58,28 @@ dataSources:
         filter:
           module: dappsStaking
           method: ContractRemoved
-      - handler: handleBondAndStake
-        kind: substrate/EventHandler
-        filter:
-          module: dappsStaking
-          method: BondAndStake
-      - handler: handleUnbondAndUnstake
-        kind: substrate/EventHandler
-        filter:
-          module: dappsStaking
-          method: UnbondAndUnstake
-      - handler: handleWithdrawal
-        kind: substrate/EventHandler
-        filter:
-          module: dappsStaking
-          method: Withdrawn
-      - handler: handleWithdrawalFromUnregistered
-        kind: substrate/EventHandler
-        filter:
-          module: dappsStaking
-          method: WithdrawFromUnregistered
-      - handler: handleNominationTransfer
-        kind: substrate/EventHandler
-        filter:
-          module: dappsStaking
-          method: NominationTransfer
+      # - handler: handleBondAndStake
+      #   kind: substrate/EventHandler
+      #   filter:
+      #     module: dappsStaking
+      #     method: BondAndStake
+      # - handler: handleUnbondAndUnstake
+      #   kind: substrate/EventHandler
+      #   filter:
+      #     module: dappsStaking
+      #     method: UnbondAndUnstake
+      # - handler: handleWithdrawal
+      #   kind: substrate/EventHandler
+      #   filter:
+      #     module: dappsStaking
+      #     method: Withdrawn
+      # - handler: handleWithdrawalFromUnregistered
+      #   kind: substrate/EventHandler
+      #   filter:
+      #     module: dappsStaking
+      #     method: WithdrawFromUnregistered
+      # - handler: handleNominationTransfer
+      #   kind: substrate/EventHandler
+      #   filter:
+      #     module: dappsStaking
+      #     method: NominationTransfer
