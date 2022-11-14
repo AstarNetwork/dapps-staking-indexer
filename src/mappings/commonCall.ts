@@ -32,6 +32,7 @@ export async function storeCall(toAddress: string, fromAddress: string, callTime
       record.uniqueActiveUsers = BigInt(1);
       record.timestamp = callTimestamp;
       record.startBlock = blockNumber;
+      record.endBlock = blockNumber;
     }
 
     await record.save();

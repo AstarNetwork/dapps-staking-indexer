@@ -19,16 +19,16 @@ network:
     file: ./dist/chaintypes.js
 dataSources:
 - kind: substrate/FrontierEvm
-  startBlock: 814289 #The first block after all Staking festival dapps were unregistered
+  startBlock: 815708 #The first era after all Staking festival dapps were unregistered
   processor:
-    file: ./node_modules/@subql/frontier-evm-processor/dist/index.js
+    file: ./node_modules/@subql/frontier-evm-processor/dist/bundle.js
   mapping:
     file: ./dist/index.js
     handlers:
       - handler: handleFrontierEvmCall
         kind: substrate/FrontierEvmCall
 - kind: substrate/Wasm
-  startBlock: 814289
+  startBlock: 815708
   processor:
     file: ./node_modules/@subql/substrate-wasm-processor/dist/bundle.js
   mapping:
@@ -37,7 +37,7 @@ dataSources:
       - handler: handleWasmCall
         kind: substrate/WasmCall
 - kind: substrate/Runtime
-  startBlock: 814289 #The first block after all Staking festival dapps were unregistered.
+  startBlock: 815708 #The first block after all Staking festival dapps were unregistered.
   mapping:
     file: ./dist/index.js
     handlers:

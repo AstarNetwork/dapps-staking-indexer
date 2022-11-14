@@ -1,7 +1,6 @@
 import { FrontierEvmCall } from "@subql/frontier-evm-processor";
 import { BigNumber } from "ethers";
 import { storeCall } from "./commonCall";
-import { isRegisteredContract } from "./common";
 
 type ApproveCallArgs = [string, BigNumber] & {
   _spender: string;

@@ -1,4 +1,4 @@
-import { Option, Struct } from '@polkadot/types';
+import { Struct } from '@polkadot/types';
 import { AccountId } from '@polkadot/types/interfaces';
 
 interface RegisteredDapp extends Struct {
@@ -49,7 +49,7 @@ async function getRegisteredContracts(): Promise<Map<string, boolean>> {
 
     // TODO check why the code above is not working (v.unwrap())
     if (contractAddress) {
-      result.set(address, true);
+      result.set(contractAddress.toLowerCase(), true);
     }
   });
 
@@ -57,8 +57,8 @@ async function getRegisteredContracts(): Promise<Map<string, boolean>> {
   return result;
 }
 
-async function getContracts(): Promise<Map<string, boolean>> {
-  if (!contracts) {
+export async function getContracts(reload = false): Promise<Map<string, boolean>> {
+  if (!contracts || reload) {
     contracts = await getRegisteredContracts();
   }
 
@@ -73,9 +73,9 @@ async function getContracts(): Promise<Map<string, boolean>> {
 export async function isRegisteredContract(
   contractAddress: string
 ): Promise<boolean> {
-  const c = await getContracts();
+  const c = await getContracts(false);
 
-  return c.has(contractAddress);
+  return c.has(contractAddress.toLowerCase());
 }
 
 /**
@@ -83,9 +83,9 @@ export async function isRegisteredContract(
  * @param contractAddress Contact to add.
  */
 export async function addContactToCache(contractAddress: string) {
-  const c = await getContracts();
+  const c = await getContracts(false);
   logger.info(`***Adding contract ${contractAddress} to cache.`);
-  c.set(contractAddress, true);
+  c.set(contractAddress.toLowerCase(), true);
 }
 
 /**
@@ -93,9 +93,9 @@ export async function addContactToCache(contractAddress: string) {
  * @param contractAddress Contact to remove.
  */
  export async function removeContactFromCache(contractAddress: string) {
-  const c = await getContracts();
+  const c = await getContracts(false);
   logger.info(`***Removing contract ${contractAddress} from cache.`);
-  c.delete(contractAddress);
+  c.delete(contractAddress.toLowerCase());
 }
 
 

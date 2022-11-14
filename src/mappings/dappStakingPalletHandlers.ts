@@ -1,9 +1,9 @@
 // Methods here handles dapps staking pallet events.
 import { SubstrateEvent } from "@subql/types";
 import { Codec } from "@polkadot/types/types";
-import { Balance } from '@polkadot/types/interfaces';
-import { addContactToCache, removeContactFromCache } from "./common";
-import { UserTransaction, UserTransactionType } from "../types";
+import { Balance, EraIndex } from '@polkadot/types/interfaces';
+import { addContactToCache, removeContactFromCache, getContracts } from "./common";
+import { UserTransaction, UserTransactionType, Era, Contract } from "../types";
 import crypto from 'crypto';
 
 function getAddress(address: Codec): string {
@@ -23,8 +23,18 @@ export async function handleNewContract(event: SubstrateEvent): Promise<void> {
     },
   } = event;
   
-  const contractAddress = getAddress(contract);
-  await addContactToCache(contractAddress);
+  // const contractAddress = getAddress(contract);
+  // await addContactToCache(contractAddress);
+
+  // Reload contracts cache
+  await getContracts(true);
+
+  // const era = await api.query.dappsStaking.currentEra<EraIndex>();
+  // const record = new Contract(contractAddress);
+  // record.registrationEra = era.toBigInt();
+  // record.registrationBlock = event.block.block.header.number.toBigInt();
+  // record.registrationTimestamp = BigInt(event.block.timestamp.getTime());
+  // await record.save();
 }
 
 /**
@@ -40,8 +50,18 @@ export async function handleContractRemoved(
     },
   } = event;
 
-  const contractAddress = getAddress(contract);
-  await removeContactFromCache(contractAddress);
+  // const contractAddress = getAddress(contract);
+  //await removeContactFromCache(contractAddress);
+
+  // Reload contracts cache
+  await getContracts(true);
+
+  // const era = await api.query.dappsStaking.currentEra<EraIndex>();
+  // const record = await Contract.get(contractAddress);
+  // record.unregistrationBlock = event.block.block.header.number.toBigInt();
+  // record.unregistrationEra = era.toBigInt();
+  // record.unregistrationTimestamp = BigInt(event.block.timestamp.getTime());
+  // await record.save();
 }
 
 export async function handleBondAndStake(event: SubstrateEvent): Promise<void> {
@@ -91,6 +111,18 @@ export async function handleNominationTransfer(event: SubstrateEvent): Promise<v
     (amount as Balance).toBigInt(),
     BigInt(event.block.timestamp.getTime()),
     targetContract);
+}
+
+export async function handleNewDappStakingEra(event:SubstrateEvent) {
+  const {event: {data: [eraIndex]}} = event;
+
+  const record = new Era(eraIndex.toString());
+  record.block = event.block.block.header.number.toBigInt(),
+  record.timestamp = BigInt(event.block.timestamp.getTime());
+  await record.save();
+
+  // Reload contracts cache
+  await getContracts(true);
 }
 
 async function storeEvent(
