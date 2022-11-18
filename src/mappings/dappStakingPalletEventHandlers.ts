@@ -23,18 +23,8 @@ export async function handleNewContract(event: SubstrateEvent): Promise<void> {
     },
   } = event;
   
-  // const contractAddress = getAddress(contract);
-  // await addContactToCache(contractAddress);
-
   // Reload contracts cache
   await getContracts(true);
-
-  // const era = await api.query.dappsStaking.currentEra<EraIndex>();
-  // const record = new Contract(contractAddress);
-  // record.registrationEra = era.toBigInt();
-  // record.registrationBlock = event.block.block.header.number.toBigInt();
-  // record.registrationTimestamp = BigInt(event.block.timestamp.getTime());
-  // await record.save();
 }
 
 /**
@@ -50,18 +40,8 @@ export async function handleContractRemoved(
     },
   } = event;
 
-  // const contractAddress = getAddress(contract);
-  //await removeContactFromCache(contractAddress);
-
   // Reload contracts cache
   await getContracts(true);
-
-  // const era = await api.query.dappsStaking.currentEra<EraIndex>();
-  // const record = await Contract.get(contractAddress);
-  // record.unregistrationBlock = event.block.block.header.number.toBigInt();
-  // record.unregistrationEra = era.toBigInt();
-  // record.unregistrationTimestamp = BigInt(event.block.timestamp.getTime());
-  // await record.save();
 }
 
 export async function handleBondAndStake(event: SubstrateEvent): Promise<void> {
@@ -71,6 +51,7 @@ export async function handleBondAndStake(event: SubstrateEvent): Promise<void> {
     account.toString(),
     (amount as Balance).toBigInt(),
     BigInt(event.block.timestamp.getTime()),
+    event.block.block.header.number.toBigInt(),
     contract);
 }
 
@@ -81,25 +62,28 @@ export async function handleUnbondAndUnstake(event: SubstrateEvent): Promise<voi
     account.toString(),
     (amount as Balance).toBigInt(),
     BigInt(event.block.timestamp.getTime()),
+    event.block.block.header.number.toBigInt(),
     contract);
 }
 
 export async function handleWithdrawal(event: SubstrateEvent): Promise<void> {
   const {event: {data: [account, amount]}} = event;
   await storeEvent(
-    UserTransactionType.Withdrawal,
+    UserTransactionType.Withdraw,
     account.toString(),
     (amount as Balance).toBigInt(),
-    BigInt(event.block.timestamp.getTime()));
+    BigInt(event.block.timestamp.getTime()),
+    event.block.block.header.number.toBigInt());
 }
 
 export async function handleWithdrawalFromUnregistered(event: SubstrateEvent): Promise<void> {
   const {event: {data: [account, contract, amount]}} = event;
   await storeEvent(
-    UserTransactionType.Withdrawal,
+    UserTransactionType.WithdrawFromUnregistered,
     account.toString(),
     (amount as Balance).toBigInt(),
     BigInt(event.block.timestamp.getTime()),
+    event.block.block.header.number.toBigInt(),
     contract);
 }
 
@@ -110,6 +94,7 @@ export async function handleNominationTransfer(event: SubstrateEvent): Promise<v
     account.toString(),
     (amount as Balance).toBigInt(),
     BigInt(event.block.timestamp.getTime()),
+    event.block.block.header.number.toBigInt(),
     targetContract);
 }
 
@@ -130,7 +115,8 @@ async function storeEvent(
   userAddress: string,
   amount: bigint,
   timestamp: bigint,
-  contractAddres?: Codec
+  blockNumber: bigint,
+  contractAddres?: Codec,
 ): Promise<void> {
   const id = crypto.randomUUID();
   const record = new UserTransaction(id);
@@ -139,5 +125,6 @@ async function storeEvent(
   record.transaction = event;
   record.userAddress = userAddress;
   record.contractAddress = contractAddres ? getAddress(contractAddres) : null;
+  record.blockNumber = blockNumber;
   await record.save();
 }

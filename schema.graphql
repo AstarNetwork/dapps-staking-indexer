@@ -14,19 +14,21 @@ type CallByEra @entity {
   endBlock: Int
 }
 
-type UserTransaction @entity {
+type StakingEvent @entity {
   id: ID!
   userAddress: String! @index
   transaction: UserTransactionType!
   contractAddress: String
   amount: BigInt!
   timestamp: BigInt! @index
+  blockNumber: BigInt!
 }
 
 enum UserTransactionType {
   BondAndStake,
   UnbondAndUnstake,
-  Withdrawal,
+  Withdraw,
+  WithdrawFromUnregistered,
   NominationTransfer
 }
 
@@ -44,5 +46,17 @@ type Contract @entity {
   unregistrationEra: BigInt
   unregistrationTimestamp: BigInt
   unregistrationBlock: BigInt
+}
+
+type UserTransaction @entity {
+  id: ID!
+  userAddress: String! @index
+  transaction: UserTransactionType!
+  transactionHash: String!
+  transactionSuccess: Boolean!
+  contractAddress: String
+  amount: BigInt
+  timestamp: BigInt! @index
+  blockNumber: BigInt!
 }
 

@@ -74,28 +74,53 @@ dataSources:
         filter:
           module: dappsStaking
           method: NewDappStakingEra
-      - handler: handleBondAndStake
-        kind: substrate/EventHandler
+      # - handler: handleBondAndStake
+      #   kind: substrate/EventHandler
+      #   filter:
+      #     module: dappsStaking
+      #     method: BondAndStake
+      # - handler: handleUnbondAndUnstake
+      #   kind: substrate/EventHandler
+      #   filter:
+      #     module: dappsStaking
+      #     method: UnbondAndUnstake
+      # - handler: handleWithdrawal
+      #   kind: substrate/EventHandler
+      #   filter:
+      #     module: dappsStaking
+      #     method: Withdrawn
+      # - handler: handleWithdrawalFromUnregistered
+      #   kind: substrate/EventHandler
+      #   filter:
+      #     module: dappsStaking
+      #     method: WithdrawFromUnregistered
+      # - handler: handleNominationTransfer
+      #   kind: substrate/EventHandler
+      #   filter:
+      #     module: dappsStaking
+      #     method: NominationTransfer
+      - handler: handleBondAndStakeCall
+        kind: substrate/CallHandler
         filter:
           module: dappsStaking
-          method: BondAndStake
-      - handler: handleUnbondAndUnstake
-        kind: substrate/EventHandler
+          method: bondAndStake
+      - handler: handleUnbondAndUnstakeCall
+        kind: substrate/CallHandler
         filter:
           module: dappsStaking
-          method: UnbondAndUnstake
-      - handler: handleWithdrawal
-        kind: substrate/EventHandler
+          method: unbondAndUnstake
+      - handler: handleWithdrawCall
+        kind: substrate/CallHandler
         filter:
           module: dappsStaking
-          method: Withdrawn
-      - handler: handleWithdrawalFromUnregistered
-        kind: substrate/EventHandler
+          method: withdrawUnbonded
+      - handler: handleWithdrawFromUnregisteredCall
+        kind: substrate/CallHandler
         filter:
           module: dappsStaking
-          method: WithdrawFromUnregistered
-      - handler: handleNominationTransfer
-        kind: substrate/EventHandler
+          method: withdrawFromUnregistered
+      - handler: handleNominationTransferCall
+        kind: substrate/CallHandler
         filter:
           module: dappsStaking
-          method: NominationTransfer
+          method: nominationTransfer
